@@ -10,4 +10,25 @@ budget	numeric	required
 */
 
 // Imports
+const router = require('express').Router();
 const db = require('../data/dbConfig.js');
+
+
+// GET all accounts
+
+// POST a new account
+    // Validate post before adding
+
+// PUT/UPDATE existing account
+    // is validation needed before updating? 
+
+// DELETE an exisitng account
+    // is validation needed before updating? 
+
+// Custom Middleware needed in order to validate the account.
+    // name = string --> is required and unique**  
+    // budget is a # --> also required
+
+    
+// Always export!
+module.exports = router;
