@@ -15,20 +15,82 @@ const db = require('../data/dbConfig.js');
 
 
 // GET all accounts
+router.get('/', (req, res) => {
+    db.select('*')
+    .from('accounts')
+    .then(acct => {
+        res.status(200).json(acct)
+    })
+    .catch(err => {
+        res.status(500).json({ message: 'Error retrieving the lsit of accounts.' })
+    })
+});
+
+// GET accounts by a specified ID
+router.get('/:id', (req, res) => {
+    db.select('*') // select everything
+    .from('accounts') // from the accts table
+    .where('id', '=', req.params.id) // where id from our client request is equal to the id of an account
+    .first() // finding the first id that matches
+    .then(acct => {
+        res.status(200).json(acct)
+    })
+    .catch(err => {
+        res.status(500).json({ message: 'There was an error retrieving that account.' })
+    })
+});
 
 // POST a new account
-    // Validate post before adding
+router.post('/', (req, res) => {
+    // checek if the req body has a name and a budget 
+    if(!req.body.name) {
+        res.status(400).json({ message: 'Please provide a name.' })
+    } else if(!req.body.budget) {
+        res.status(400).json({ message: 'Please provide a budget.' })
+    }
+
+    // when both pass, insert the body and 'id'
+    db('accounts') // select the accounts table
+    .insert(req.body, 'id') // insert the client request body with the 'id' that we always need
+    .then(id => {
+        res.status(200).json(id)
+    })
+    .catch(err => {
+        res.status(500).json({ message: 'There was an error creating the account.' })
+    })
+});
 
 // PUT/UPDATE existing account
-    // is validation needed before updating? 
+router.put('/:id', (req, res) => {
+
+    if(!req.body.budget) {
+        res.status(400).json({ message: 'Please provide a budget.' })
+    }
+
+    db('accounts') // select our accounts table
+    .where({ id: req.params.id }) // where we find the key=value of the selected account(id) provided by the client
+    .update({ budget: req.body.budget }) // now update the key=value for the budget field
+    .then(updated => {
+        res.status(200).json(updated)
+    })
+    .catch(err => {
+        res.status(500).json({ message: 'There was an error updating the accounts budget.' })
+    })
+});
 
 // DELETE an exisitng account
-    // is validation needed before updating? 
+router.delete('/:id', (req, res) => {
+    db('accounts') // select the accounts table from our db
+    .where({ id: req.params.id }) // where we find the key=value of 'id' from the clients request
+    .del() // run the delete function on that id
+    .then(deleted => {
+        res.status(200).json(deleted)
+    })
+    .catch(err => {
+        res.status(500).json({ message: 'There was an error deleting the account.' })
+    })
+});
 
-// Custom Middleware needed in order to validate the account.
-    // name = string --> is required and unique**  
-    // budget is a # --> also required
 
-    
 // Always export!
 module.exports = router;

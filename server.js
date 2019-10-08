@@ -13,7 +13,7 @@ server.use(express.json());
 
 // ORDER MATTERS
     // add our accountRouter to be used by the server
-server.use('api/accounts', accountRouter)
+server.use('/api/accounts', accountRouter)
 
 // Always Export the server.
 module.exports = server;
